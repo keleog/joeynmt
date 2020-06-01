@@ -11,6 +11,7 @@ import torch.nn.functional as F
 
 from joeynmt.initialization import initialize_model
 from joeynmt.embeddings import Embeddings
+from joeynmt.embeddings import initialize_embeddings
 from joeynmt.encoders import Encoder, RecurrentEncoder, TransformerEncoder
 from joeynmt.decoders import Decoder, RecurrentDecoder, TransformerDecoder
 from joeynmt.constants import PAD_TOKEN, EOS_TOKEN, BOS_TOKEN
@@ -214,6 +215,8 @@ def build_model(cfg: dict = None,
     src_embed = Embeddings(
         **cfg["encoder"]["embeddings"], vocab_size=len(src_vocab),
         padding_idx=src_padding_idx)
+    if cfg.get("pretrained_embed_path", None):
+        initialize_embeddings(cfg, src_vocab, src_embed)
 
     # this ties source and target embeddings
     # for softmax layer tying, see further below
@@ -228,6 +231,9 @@ def build_model(cfg: dict = None,
         trg_embed = Embeddings(
             **cfg["decoder"]["embeddings"], vocab_size=len(trg_vocab),
             padding_idx=trg_padding_idx)
+
+        if cfg.get("pretrained_embed_path", None):
+            initialize_embeddings(cfg, trg_vocab, trg_embed)
 
     # build encoder
     enc_dropout = cfg["encoder"].get("dropout", 0.)
@@ -244,7 +250,6 @@ def build_model(cfg: dict = None,
         encoder = RecurrentEncoder(**cfg["encoder"],
                                    emb_size=src_embed.embedding_dim,
                                    emb_dropout=enc_emb_dropout)
-
     # build decoder
     dec_dropout = cfg["decoder"].get("dropout", 0.)
     dec_emb_dropout = cfg["decoder"]["embeddings"].get("dropout", dec_dropout)

@@ -131,7 +131,8 @@ def initialize_model(model: nn.Module, cfg: dict, src_padding_idx: int,
         for name, p in model.named_parameters():
 
             if "embed" in name:
-                embed_init_fn_(p)
+                #embed_init_fn_(p)
+                pass
 
             elif "bias" in name:
                 bias_init_fn_(p)
