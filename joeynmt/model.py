@@ -215,8 +215,8 @@ def build_model(cfg: dict = None,
     src_embed = Embeddings(
         **cfg["encoder"]["embeddings"], vocab_size=len(src_vocab),
         padding_idx=src_padding_idx)
-    if cfg.get("pretrained_embed_path", None):
-        initialize_embeddings(cfg, src_vocab, src_embed)
+    if cfg.get("src_pretrained_embed_path", None):
+        initialize_embeddings(cfg, src_vocab, src_embed, sep = " ")
 
     # this ties source and target embeddings
     # for softmax layer tying, see further below
@@ -232,8 +232,8 @@ def build_model(cfg: dict = None,
             **cfg["decoder"]["embeddings"], vocab_size=len(trg_vocab),
             padding_idx=trg_padding_idx)
 
-        if cfg.get("pretrained_embed_path", None):
-            initialize_embeddings(cfg, trg_vocab, trg_embed)
+        if cfg.get("trg_pretrained_embed_path", None):
+            initialize_embeddings(cfg, trg_vocab, trg_embed, sep = "\t")
 
     # build encoder
     enc_dropout = cfg["encoder"].get("dropout", 0.)

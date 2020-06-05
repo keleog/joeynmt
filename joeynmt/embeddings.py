@@ -89,12 +89,17 @@ def reload_txt_emb(path: str, embedding_dim: int = 300) -> tuple:
         )
     return vectors, word2id
 
-def initialize_embeddings(config: dict, vocab: Vocabulary, embeddings: Embeddings):
+def initialize_embeddings(config: dict, vocab: Vocabulary, embeddings: Embeddings, is_src: bool):
     """
     Initialize embeddings from pretrained weights
     """
-    pretrained_path = config.get("pretrained_embed_path", None)
-    pretrained_dim = config.get("pretrained_embed_dim", None)
+
+    if is_src:
+        pretrained_path = config.get("src_pretrained_embed_path", None)
+        pretrained_dim = config.get("src_pretrained_embed_dim", None)
+    else:
+        pretrained_path = config.get("trg_pretrained_embed_path", None)
+        pretrained_dim = config.get("trg_pretrained_embed_dim", None)
     
     pretrained, word2id = reload_txt_emb(pretrained_path, pretrained_dim)
     found = 0
